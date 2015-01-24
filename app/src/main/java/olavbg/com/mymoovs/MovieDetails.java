@@ -4,19 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,8 +88,8 @@ public class MovieDetails extends Activity {
         txtActor.setText(Html.fromHtml("<strong>Actors</strong><br>" + selected_movie.getActor()));
         txtplot.setText(Html.fromHtml("<strong>Plot</strong><br>" + selected_movie.getPlot()));
         if (!selected_movie.getImdb_id().isEmpty() && isConnected()) {
-            //imgPoster.loadUrl("http://www.olavbg.com/images/poster_thumbs/" + selected_movie.getMovieID() + ".jpeg");
-            backgroundImage.loadUrl("http://img.omdbapi.com/?apikey=7490539a&h="+720+"&i="+selected_movie.getImdb_id());
+            imgPoster.loadUrl("http://www.olavbg.com/images/poster_thumbs/" + selected_movie.getMovieID() + ".jpeg");
+//            backgroundImage.loadUrl("http://img.omdbapi.com/?apikey=7490539a&h="+720+"&i="+selected_movie.getImdb_id());
         } else {
             imgPoster.setVisibility(View.GONE);
         }
