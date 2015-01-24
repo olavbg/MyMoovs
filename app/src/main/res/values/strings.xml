@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="title_section1" translatable="false">MyMoovs</string>
+    <string name="title_section2">Borrowed movies</string>
+    <string name="title_section3">Lent movies</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">MyMoovs</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="log_out">Log out</string>
+    <string name="enter_title">Enter title of new movie</string>
+    <string name="enter_titleBorrowed">Enter title of borrowed movie</string>
+    <string name="enter_titleLent">Enter title of lent movie</string>
+    <string name="add_movie">Add new movie</string>
+    <string name="registeredMovies">Your registered movies: </string>
+    <string name="not_enough_characters_title">Title must contain at least 2 characters!</string>
+    <string name="not_selected_format">Ops! It seems like you don\'t have selected your movie format. Please try selecting again</string>
+    <string name="movie_exists">You already have this movie in your library</string>
+    <string name="refresh">Refresh</string>
+    <string name="retrieving_movies">Retrieving movies from database</string>
+    <string name="delete">Delete</string>
+    <string name="returnBorrowed">Return/delete movie</string>
+    <string name="returnLent">This is returned</string>
+    <string name="borrowMovie">This is borrowed</string>
+    <string name="lendMovie">This is lent</string>
+    <string name="viewOnline">View movie online</string>
+
+    <string-array name="formats">
+        <item>Blu-Ray</item>
+        <item>DVD</item>
+        <item>VHS</item>
+    </string-array>
+
+    <string name="title_movie_list">Movies</string>
+    <string name="title_movie_detail">Movie Detail</string>
+    <string name="title_activity_movie_details" translatable="false">MovieDetails</string>
+    <string name="search_item">Search</string>
+    <string name="watch_trailer">Watch Trailer</string>
+    <string name="delete_movie">Delete</string>
+    <string name="edit_movie">Edit</string>
+    <string name="title_activity_edit" translatable="false">EditActivity</string>
+    <string name="fetching_movies">Fetching movies from the cloud…</string>
+    <string name="movie_exists_in_cloud">You already have this movie in your cloud. Maybe you could try refreshing your movies if the movie is missing from your movie lists?</string>
+
+</resources>

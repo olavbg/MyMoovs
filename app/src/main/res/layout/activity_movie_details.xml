@@ -1,0 +1,155 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="olavbg.com.mymoovs.MovieDetails">
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/backgroundImage"/>
+
+    <ScrollView android:layout_height="match_parent" android:layout_width="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtTagline"
+                android:layout_marginTop="-5dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtTitle"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/txtTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtFormat"
+                android:layout_below="@+id/txtTitle"
+                android:layout_marginBottom="3dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtTagline" />
+
+            <TextView
+                android:id="@+id/txtFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtType"
+                android:layout_below="@+id/txtTagline"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtFormat" />
+
+            <TextView
+                android:id="@+id/txtType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtDate_added"
+                android:layout_below="@+id/txtFormat"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtType" />
+
+            <TextView
+                android:id="@+id/txtDate_added"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtYear"
+                android:layout_below="@+id/txtType"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtDate_added" />
+
+            <TextView
+                android:id="@+id/txtYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtRuntime"
+                android:layout_below="@+id/txtDate_added"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtYear" />
+
+            <TextView
+                android:id="@+id/txtRuntime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtGenre"
+                android:layout_below="@+id/txtYear"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtRuntime" />
+
+            <TextView
+                android:id="@+id/txtGenre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtDirector"
+                android:layout_below="@+id/txtRuntime"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtGenre" />
+
+            <TextView
+                android:id="@+id/txtDirector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtWriter"
+                android:layout_below="@+id/txtGenre"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtDirector" />
+
+            <TextView
+                android:id="@+id/txtWriter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txtActor"
+                android:layout_below="@+id/txtDirector"
+                android:layout_marginTop="2dp"
+                android:layout_toLeftOf="@+id/imgPoster"
+                android:text="txtWriter" />
+
+            <TextView
+                android:id="@+id/txtActor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtWriter"
+                android:layout_marginTop="2dp"
+                android:text="txtActor" />
+
+            <TextView
+                android:id="@+id/txtPlot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtActor"
+                android:layout_marginTop="2dp"
+                android:text="txtPlot" />
+
+            <TextView
+                android:id="@+id/txtLent_Borrowed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/txtPlot"
+                android:layout_marginTop="2dp"
+                android:text="txtLent_Borrowed"
+                android:visibility="gone" />
+
+            <WebView
+                android:id="@+id/imgPoster"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="3dp" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

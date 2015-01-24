@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="olavbg.com.mymoovs.MovieDetails" >
+    <item android:id="@+id/log_out"
+        android:title="@string/log_out"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:visible="false"/>
+
+    <item android:id="@+id/trailer"
+        android:title="@string/watch_trailer"
+        android:icon="@drawable/ic_action_play_over_video"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"/>
+
+    <item android:id="@+id/delete"
+        android:title="@string/delete_movie"
+        android:icon="@drawable/ic_action_discard"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"/>
+
+    <item android:id="@+id/edit"
+        android:title="@string/edit_movie"
+        android:icon="@drawable/ic_action_edit"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"/>
+</menu>
