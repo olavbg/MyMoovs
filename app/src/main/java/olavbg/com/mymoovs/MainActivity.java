@@ -1,7 +1,11 @@
 package olavbg.com.mymoovs;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,11 +15,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -49,35 +49,36 @@ import tools.PreferenceHandler;
 
 import static tools.Functions.getTodaysDate;
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     public static final String MyPREFERENCES = "MyPrefs";
     public static ListView lstMovies;
     public static ArrayAdapter<Movie> adapter;
-    public static ArrayAdapter<Movie> valgtAdapter = adapter;
     public static ArrayAdapter<Movie> borrowedAdapter;
     public static ArrayAdapter<Movie> lentAdapter;
+    public static ArrayAdapter<Movie> valgtAdapter = adapter;
     public static TextView lblRegisteredMovies;
     public static Context context;
-    public static ArrayList<Movie> movies = new ArrayList<>();
+    public static ArrayList<Movie> movies = new ArrayList<Movie>();
+    public static ArrayList<Movie> borrowedMovies = new ArrayList<Movie>();
+    public static ArrayList<Movie> lentMovies = new ArrayList<Movie>();
     public static ArrayList<Movie> valgtListe = movies;
-    public static ArrayList<Movie> borrowedMovies = new ArrayList<>();
-    public static ArrayList<Movie> lentMovies = new ArrayList<>();
     public static JSONObject jsonUser;
     public static Boolean refresh = false;
-    public static UserFunctions userFunction;
-    public static Movie selected_movie = null;
     private static JSONArray json;
-    public final Gson gson = new Gson();
-    public PreferenceHandler preferenceHandler;
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     Intent login_screen;
     Intent settings_screen;
     JSONObject search_res = null;
-    ProgressDialog dialog;
     private EditText txtTitle;
     private Spinner cbxFormats;
+    public static UserFunctions userFunction;
+    ProgressDialog dialog;
+    public static Movie selected_movie = null;
+    public final Gson gson = new Gson();
+    public PreferenceHandler preferenceHandler;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -89,44 +90,6 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
 
     public MainActivity() {
-    }
-
-    public static Movie findMovie(int movieID) {
-        for (Movie movie : movies) {
-            if (movie.getMovieID() == movieID) {
-                return movie;
-            }
-        }
-        for (Movie movie : lentMovies) {
-            if (movie.getMovieID() == movieID) {
-                return movie;
-            }
-        }
-        for (Movie movie : borrowedMovies) {
-            if (movie.getMovieID() == movieID) {
-                return movie;
-            }
-        }
-        return null;
-    }
-
-    public static Movie findMovie(String title, String format) {
-        for (Movie movie : movies) {
-            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
-                return movie;
-            }
-        }
-        for (Movie movie : lentMovies) {
-            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
-                return movie;
-            }
-        }
-        for (Movie movie : borrowedMovies) {
-            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
-                return movie;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -216,7 +179,7 @@ public class MainActivity extends ActionBarActivity
         addFormatsToSpinner();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -233,25 +196,29 @@ public class MainActivity extends ActionBarActivity
             public void run() {
                 JSONArray movieFormats = userFunction.getMovieFormats();
                 final ArrayList<String> movieFormatsList = new ArrayList<String>();
-                for (int i = 0; i < movieFormats.length(); i++) {
-                    try {
-                        JSONObject movieFormat = movieFormats.getJSONObject(i);
-                        movieFormatsList.add(movieFormat.getString("beskrivelse"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (!movieFormatsList.isEmpty()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context,
-                                    android.R.layout.simple_spinner_item, movieFormatsList);
-                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            cbxFormats.setAdapter(dataAdapter);
-                            cbxFormats.invalidate();
+                if (movieFormats != null){
+                    for (int i = 0; i < movieFormats.length(); i++) {
+                        try {
+                            JSONObject movieFormat = movieFormats.getJSONObject(i);
+                            movieFormatsList.add(movieFormat.getString("beskrivelse"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    });
+                    }
+                    if (!movieFormatsList.isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context,
+                                        android.R.layout.simple_spinner_item, movieFormatsList);
+                                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                cbxFormats.setAdapter(dataAdapter);
+                                cbxFormats.invalidate();
+                            }
+                        });
+                    }
+                }else{
+                    makeToast("Error connecting to the cloud");
                 }
             }
         }).start();
@@ -268,53 +235,58 @@ public class MainActivity extends ActionBarActivity
                         movies.clear();
                         lentMovies.clear();
                         borrowedMovies.clear();
-                        for (int i = 0; i < json.length(); i++) {
-                            JSONObject jsonObject = json.getJSONObject(i);
-                            Movie newMovie = new Movie(Integer.valueOf(jsonObject.getString("filmID")), jsonObject.getString("tittel").replace("\\", ""), jsonObject.getString("format"));
-                            String ut = jsonObject.getString("ut");
+                        if (json != null){
+                            for (int i = 0; i < json.length(); i++) {
+                                JSONObject jsonObject = json.getJSONObject(i);
+                                Movie newMovie = new Movie(Integer.valueOf(jsonObject.getString("filmID")), jsonObject.getString("tittel").replace("\\", ""), jsonObject.getString("format"));
+                                String ut = jsonObject.getString("ut");
 
-                            String date_added = jsonObject.getString("lagtTil");
-                            int year = !jsonObject.get("year").toString().isEmpty() ? Integer.parseInt(jsonObject.getString("year")) : 0;
-                            int runtime = !jsonObject.get("runtime").toString().isEmpty() ? Integer.parseInt(jsonObject.getString("runtime")) : 0;
-                            String genre = jsonObject.getString("genre").replace("\\", "");
-                            String director = jsonObject.getString("director").replace("\\", "");
-                            String writer = jsonObject.getString("writer").replace("\\", "");
-                            String actor = jsonObject.getString("actor").replace("\\", "");
-                            String tagline = jsonObject.getString("tagline").replace("\\", "");
-                            String plot = jsonObject.getString("plot").replace("\\", "");
-                            String trailer = jsonObject.getString("trailer").replace("\\", "");
-                            String imdb_id = jsonObject.getString("imdb_id").replace("\\", "");
-                            String poster = jsonObject.getString("poster").replace("\\", "");
-                            String type = jsonObject.getString("type").replace("\\", "");
-                            String dato = jsonObject.getString("dato");
-                            String navn = jsonObject.getString("navn");
+                                String date_added = jsonObject.getString("lagtTil");
+                                int year = !jsonObject.get("year").toString().isEmpty() ? Integer.parseInt(jsonObject.getString("year")) : 0;
+                                int runtime = !jsonObject.get("runtime").toString().isEmpty() ? Integer.parseInt(jsonObject.getString("runtime")) : 0;
+                                String genre = jsonObject.getString("genre").replace("\\", "");
+                                String director = jsonObject.getString("director").replace("\\", "");
+                                String writer = jsonObject.getString("writer").replace("\\", "");
+                                String actor = jsonObject.getString("actor").replace("\\", "");
+                                String tagline = jsonObject.getString("tagline").replace("\\", "");
+                                String plot = jsonObject.getString("plot").replace("\\", "");
+                                String trailer = jsonObject.getString("trailer").replace("\\", "");
+                                String imdb_id = jsonObject.getString("imdb_id").replace("\\", "");
+                                String poster = jsonObject.getString("poster").replace("\\", "");
+                                String type = jsonObject.getString("type").replace("\\", "");
+                                String dato = jsonObject.getString("dato");
+                                String navn = jsonObject.getString("navn");
 
-                            newMovie.setDate_added(date_added);
-                            newMovie.setYear(year);
-                            newMovie.setRuntime(runtime);
-                            newMovie.setGenre(genre);
-                            newMovie.setDirector(director);
-                            newMovie.setWriter(writer);
-                            newMovie.setActor(actor);
-                            newMovie.setTagline(tagline);
-                            newMovie.setPlot(plot);
-                            newMovie.setTrailer(trailer);
-                            newMovie.setImdb_id(imdb_id);
-                            newMovie.setPoster(poster);
-                            newMovie.setType(type);
-                            newMovie.setNavn(navn);
-                            newMovie.setDato(dato);
+                                newMovie.setDate_added(date_added);
+                                newMovie.setYear(year);
+                                newMovie.setRuntime(runtime);
+                                newMovie.setGenre(genre);
+                                newMovie.setDirector(director);
+                                newMovie.setWriter(writer);
+                                newMovie.setActor(actor);
+                                newMovie.setTagline(tagline);
+                                newMovie.setPlot(plot);
+                                newMovie.setTrailer(trailer);
+                                newMovie.setImdb_id(imdb_id);
+                                newMovie.setPoster(poster);
+                                newMovie.setType(type);
+                                newMovie.setNavn(navn);
+                                newMovie.setDato(dato);
 
-                            if (!ut.isEmpty()) {
-                                newMovie.setUt(Integer.parseInt(ut));
-                                if (newMovie.isLent()) {
-                                    lentMovies.add(newMovie);
-                                } else if (newMovie.isBorrowed()) {
-                                    borrowedMovies.add(newMovie);
+                                if (!ut.isEmpty()) {
+                                    newMovie.setUt(Integer.parseInt(ut));
+                                    if (newMovie.isLent()) {
+                                        lentMovies.add(newMovie);
+                                    } else if (newMovie.isBorrowed()) {
+                                        borrowedMovies.add(newMovie);
+                                    }
+                                } else {
+                                    movies.add(newMovie);
                                 }
-                            } else {
-                                movies.add(newMovie);
                             }
+                        }else{
+                            makeToast("Error connecting to the cloud");
+                            return;
                         }
                         runOnUiThread(new Runnable() {
                             @Override
@@ -347,7 +319,7 @@ public class MainActivity extends ActionBarActivity
         final int numborrowedMovies = Integer.valueOf(preferenceHandler.getData("numborrowedMovies"));
         final int numlentMovies = Integer.valueOf(preferenceHandler.getData("numlentMovies"));
 
-        if (nummovies <= 0 && numborrowedMovies <= 0 && numlentMovies <= 0) {
+        if (nummovies <=0 && numborrowedMovies <=0 && numlentMovies <=0){
             return;
         }
 
@@ -384,7 +356,7 @@ public class MainActivity extends ActionBarActivity
         Log.d("Saved ", arrayList.size() + " " + key + " locally");
     }
 
-    private void saveOfflineChanges(String key, ArrayList<String> arrayList) {
+    private void saveOfflineChanges(String key, ArrayList<String> arrayList){
         //TODO: Fortsette her!
         preferenceHandler.putData("num" + key, String.valueOf(arrayList.size()));
         for (String change : arrayList) {
@@ -551,6 +523,44 @@ public class MainActivity extends ActionBarActivity
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    public static Movie findMovie(int movieID) {
+        for (Movie movie : movies) {
+            if (movie.getMovieID() == movieID) {
+                return movie;
+            }
+        }
+        for (Movie movie : lentMovies) {
+            if (movie.getMovieID() == movieID) {
+                return movie;
+            }
+        }
+        for (Movie movie : borrowedMovies) {
+            if (movie.getMovieID() == movieID) {
+                return movie;
+            }
+        }
+        return null;
+    }
+
+    public static Movie findMovie(String title, String format) {
+        for (Movie movie : movies) {
+            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
+                return movie;
+            }
+        }
+        for (Movie movie : lentMovies) {
+            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
+                return movie;
+            }
+        }
+        for (Movie movie : borrowedMovies) {
+            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
+                return movie;
+            }
+        }
+        return null;
     }
 
     public void add_new_movie(View view) {
@@ -836,7 +846,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                 .commit();
@@ -864,7 +874,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
+        @SuppressLint("AppCompatMethod") ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setDisplayShowTitleEnabled(true);
@@ -957,9 +967,6 @@ public class MainActivity extends ActionBarActivity
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        public PlaceholderFragment() {
-        }
-
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -970,6 +977,9 @@ public class MainActivity extends ActionBarActivity
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
+        }
+
+        public PlaceholderFragment() {
         }
 
         @Override
