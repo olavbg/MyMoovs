@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="olavbg.com.mymoovs.MainActivity" >
+    tools:context="olavbg.com.mymoovs_beta.MainActivity" >
     <item
         android:id="@+id/menu_search"
         android:actionViewClass="android.widget.SearchView"

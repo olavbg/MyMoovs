@@ -1,4 +1,4 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import static tools.Functions.getTodaysDate;
 

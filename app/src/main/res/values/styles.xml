@@ -4,5 +4,10 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
+    
+    <style name="AppBase" parent="android:Theme.Holo.Light.DarkActionBar">
+        
+        
+    </style>
 
 </resources>

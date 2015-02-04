@@ -1,4 +1,4 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -54,6 +54,7 @@ public class MovieDetails extends Activity {
         TextView txtLent_Borrowed = (TextView) findViewById(R.id.txtLent_Borrowed);
         WebView imgPoster = (WebView) findViewById(R.id.imgPoster);
         WebView backgroundImage = (WebView) findViewById(R.id.backgroundImage);
+        backgroundImage.setVisibility(View.GONE);
 
         selected_movie = MainActivity.findMovie(getIntent().getIntExtra("movie_id", 0));
         if (selected_movie == null) {

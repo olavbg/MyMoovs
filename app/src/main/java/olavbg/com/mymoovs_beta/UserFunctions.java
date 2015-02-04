@@ -1,10 +1,9 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;

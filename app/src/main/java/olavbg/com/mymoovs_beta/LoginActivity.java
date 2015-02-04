@@ -1,4 +1,4 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.text.InputType;
 import android.text.TextUtils;

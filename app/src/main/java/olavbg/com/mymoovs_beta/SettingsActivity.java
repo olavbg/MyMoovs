@@ -1,4 +1,4 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import android.annotation.TargetApi;
 import android.content.Context;

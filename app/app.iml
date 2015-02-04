@@ -82,6 +82,13 @@
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp (1)" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp (2)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (3)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (4)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (5)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (6)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (7)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (8)" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp (9)" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

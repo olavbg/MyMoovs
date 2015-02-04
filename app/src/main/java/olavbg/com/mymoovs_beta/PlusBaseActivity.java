@@ -1,11 +1,10 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;

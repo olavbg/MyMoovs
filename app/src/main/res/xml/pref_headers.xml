@@ -3,15 +3,15 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="olavbg.com.mymoovs.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="olavbg.com.mymoovs_beta.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="olavbg.com.mymoovs.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="olavbg.com.mymoovs_beta.SettingsActivity$NotificationPreferenceFragment"
         android:title="@string/pref_header_notifications" />
 
     <header
-        android:fragment="olavbg.com.mymoovs.SettingsActivity$DataSyncPreferenceFragment"
+        android:fragment="olavbg.com.mymoovs_beta.SettingsActivity$DataSyncPreferenceFragment"
         android:title="@string/pref_header_data_sync" />
 
 </preference-headers>

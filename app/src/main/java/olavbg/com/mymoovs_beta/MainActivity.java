@@ -1,4 +1,4 @@
-package olavbg.com.mymoovs;
+package olavbg.com.mymoovs_beta;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -54,31 +54,30 @@ public class MainActivity extends Activity
     public static final String MyPREFERENCES = "MyPrefs";
     public static ListView lstMovies;
     public static ArrayAdapter<Movie> adapter;
+    public static ArrayAdapter<Movie> valgtAdapter = adapter;
     public static ArrayAdapter<Movie> borrowedAdapter;
     public static ArrayAdapter<Movie> lentAdapter;
-    public static ArrayAdapter<Movie> valgtAdapter = adapter;
     public static TextView lblRegisteredMovies;
     public static Context context;
-    public static ArrayList<Movie> movies = new ArrayList<Movie>();
-    public static ArrayList<Movie> borrowedMovies = new ArrayList<Movie>();
-    public static ArrayList<Movie> lentMovies = new ArrayList<Movie>();
+    public static ArrayList<Movie> movies = new ArrayList<>();
     public static ArrayList<Movie> valgtListe = movies;
+    public static ArrayList<Movie> borrowedMovies = new ArrayList<>();
+    public static ArrayList<Movie> lentMovies = new ArrayList<>();
     public static JSONObject jsonUser;
     public static Boolean refresh = false;
+    public static UserFunctions userFunction;
+    public static Movie selected_movie = null;
     private static JSONArray json;
+    public final Gson gson = new Gson();
+    public PreferenceHandler preferenceHandler;
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     Intent login_screen;
     Intent settings_screen;
     JSONObject search_res = null;
+    ProgressDialog dialog;
     private EditText txtTitle;
     private Spinner cbxFormats;
-    public static UserFunctions userFunction;
-    ProgressDialog dialog;
-    public static Movie selected_movie = null;
-    public final Gson gson = new Gson();
-    public PreferenceHandler preferenceHandler;
-
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -90,6 +89,44 @@ public class MainActivity extends Activity
     private CharSequence mTitle;
 
     public MainActivity() {
+    }
+
+    public static Movie findMovie(int movieID) {
+        for (Movie movie : movies) {
+            if (movie.getMovieID() == movieID) {
+                return movie;
+            }
+        }
+        for (Movie movie : lentMovies) {
+            if (movie.getMovieID() == movieID) {
+                return movie;
+            }
+        }
+        for (Movie movie : borrowedMovies) {
+            if (movie.getMovieID() == movieID) {
+                return movie;
+            }
+        }
+        return null;
+    }
+
+    public static Movie findMovie(String title, String format) {
+        for (Movie movie : movies) {
+            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
+                return movie;
+            }
+        }
+        for (Movie movie : lentMovies) {
+            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
+                return movie;
+            }
+        }
+        for (Movie movie : borrowedMovies) {
+            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
+                return movie;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -126,11 +163,11 @@ public class MainActivity extends Activity
         // Forth - the Array of data
 
         movies.clear();
-        adapter = new ArrayAdapter<Movie>(this,
+        adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, movies);
-        lentAdapter = new ArrayAdapter<Movie>(this,
+        lentAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, lentMovies);
-        borrowedAdapter = new ArrayAdapter<Movie>(this,
+        borrowedAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, borrowedMovies);
 
         // Assign adapter to ListView
@@ -176,7 +213,7 @@ public class MainActivity extends Activity
         }
 
         update_movies();
-        addFormatsToSpinner();
+//        addFormatsToSpinner();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -195,8 +232,8 @@ public class MainActivity extends Activity
         new Thread(new Runnable() {
             public void run() {
                 JSONArray movieFormats = userFunction.getMovieFormats();
-                final ArrayList<String> movieFormatsList = new ArrayList<String>();
-                if (movieFormats != null){
+                final ArrayList<String> movieFormatsList = new ArrayList<>();
+                if (movieFormats != null) {
                     for (int i = 0; i < movieFormats.length(); i++) {
                         try {
                             JSONObject movieFormat = movieFormats.getJSONObject(i);
@@ -209,7 +246,7 @@ public class MainActivity extends Activity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context,
+                                final ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context,
                                         android.R.layout.simple_spinner_item, movieFormatsList);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 cbxFormats.setAdapter(dataAdapter);
@@ -217,8 +254,9 @@ public class MainActivity extends Activity
                             }
                         });
                     }
-                }else{
+                } else {
                     makeToast("Error connecting to the cloud");
+                    stopLoading();
                 }
             }
         }).start();
@@ -235,7 +273,7 @@ public class MainActivity extends Activity
                         movies.clear();
                         lentMovies.clear();
                         borrowedMovies.clear();
-                        if (json != null){
+                        if (json != null) {
                             for (int i = 0; i < json.length(); i++) {
                                 JSONObject jsonObject = json.getJSONObject(i);
                                 Movie newMovie = new Movie(Integer.valueOf(jsonObject.getString("filmID")), jsonObject.getString("tittel").replace("\\", ""), jsonObject.getString("format"));
@@ -284,8 +322,9 @@ public class MainActivity extends Activity
                                     movies.add(newMovie);
                                 }
                             }
-                        }else{
-                            makeToast("Error connecting to the cloud");
+                        } else {
+                            makeToast("Error fetching movies from the cloud");
+                            stopLoading();
                             return;
                         }
                         runOnUiThread(new Runnable() {
@@ -319,7 +358,7 @@ public class MainActivity extends Activity
         final int numborrowedMovies = Integer.valueOf(preferenceHandler.getData("numborrowedMovies"));
         final int numlentMovies = Integer.valueOf(preferenceHandler.getData("numlentMovies"));
 
-        if (nummovies <=0 && numborrowedMovies <=0 && numlentMovies <=0){
+        if (nummovies <= 0 && numborrowedMovies <= 0 && numlentMovies <= 0) {
             return;
         }
 
@@ -356,7 +395,7 @@ public class MainActivity extends Activity
         Log.d("Saved ", arrayList.size() + " " + key + " locally");
     }
 
-    private void saveOfflineChanges(String key, ArrayList<String> arrayList){
+    private void saveOfflineChanges(String key, ArrayList<String> arrayList) {
         //TODO: Fortsette her!
         preferenceHandler.putData("num" + key, String.valueOf(arrayList.size()));
         for (String change : arrayList) {
@@ -523,44 +562,6 @@ public class MainActivity extends Activity
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
-    }
-
-    public static Movie findMovie(int movieID) {
-        for (Movie movie : movies) {
-            if (movie.getMovieID() == movieID) {
-                return movie;
-            }
-        }
-        for (Movie movie : lentMovies) {
-            if (movie.getMovieID() == movieID) {
-                return movie;
-            }
-        }
-        for (Movie movie : borrowedMovies) {
-            if (movie.getMovieID() == movieID) {
-                return movie;
-            }
-        }
-        return null;
-    }
-
-    public static Movie findMovie(String title, String format) {
-        for (Movie movie : movies) {
-            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
-                return movie;
-            }
-        }
-        for (Movie movie : lentMovies) {
-            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
-                return movie;
-            }
-        }
-        for (Movie movie : borrowedMovies) {
-            if (movie.getTitle().equals(title) && movie.getFormat().equals(format)) {
-                return movie;
-            }
-        }
-        return null;
     }
 
     public void add_new_movie(View view) {
@@ -763,7 +764,7 @@ public class MainActivity extends Activity
 
         Collections.sort(valgtListe, new Movie_comparator());
 
-        ArrayAdapter<Movie> adapter = new ArrayAdapter<Movie>(this,
+        ArrayAdapter<Movie> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, valgtListe);
         lstMovies.setAdapter(adapter);
 
@@ -824,7 +825,7 @@ public class MainActivity extends Activity
                 Collections.sort(lentMovies, new Movie_comparator());
 
                 ArrayAdapter<Movie> adapter;
-                adapter = new ArrayAdapter<Movie>(context,
+                adapter = new ArrayAdapter<>(context,
                         android.R.layout.simple_list_item_1, movieList);
                 lstMovies.setAdapter(adapter);
 
@@ -873,6 +874,7 @@ public class MainActivity extends Activity
         lstMovies.setAdapter(valgtAdapter);
     }
 
+    @SuppressWarnings("deprecation")
     public void restoreActionBar() {
         @SuppressLint("AppCompatMethod") ActionBar actionBar = getActionBar();
         if (actionBar != null) {
@@ -906,7 +908,7 @@ public class MainActivity extends Activity
                 public boolean onQueryTextChange(String s) {
                     if (!s.isEmpty()) {
                         //Search..
-                        ArrayList<Movie> foundMovies = new ArrayList<Movie>();
+                        ArrayList<Movie> foundMovies = new ArrayList<>();
                         for (Movie movie : valgtListe) {
                             if (movie.getTitle().toLowerCase().contains(s.toLowerCase())) {
                                 foundMovies.add(movie);
@@ -947,7 +949,7 @@ public class MainActivity extends Activity
         if (id == R.id.refresh) {
             update_movies();
             ArrayAdapter<Movie> adapter;
-            adapter = new ArrayAdapter<Movie>(this,
+            adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, valgtListe);
             lstMovies.setAdapter(adapter);
 
@@ -967,6 +969,9 @@ public class MainActivity extends Activity
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        public PlaceholderFragment() {
+        }
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -977,9 +982,6 @@ public class MainActivity extends Activity
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
-        }
-
-        public PlaceholderFragment() {
         }
 
         @Override

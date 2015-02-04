@@ -49,4 +49,10 @@
     <string name="title_section3">Utlånte filmer</string>
     <string name="viewOnline">Se filmdetaljer online</string>
     <string name="watch_trailer">Se trailer</string>
+
+    <string-array name="formats">
+        <item>Blu-Ray</item>
+        <item>DVD</item>
+        <item>VHS</item>
+    </string-array>
 </resources>
